@@ -1,7 +1,7 @@
-name: Build r77 Rootkit
+name: Build r77 Rootkit (SLNX)
 
 on: 
-  workflow_dispatch: # Кнопка ручного запуска сборки
+  workflow_dispatch: # Кнопка ручного запуска
 
 jobs:
   build:
@@ -11,20 +11,22 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x' # .NET SDK умеет читать файлы .slnx
+
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1
-      
-    - name: Restore NuGet Packages
-      run: nuget restore r77.sln
+    - name: Restore Packages (SLNX compatible)
+      run: dotnet restore r77.slnx
 
     - name: Build x64 Configuration
-      run: msbuild r77.sln /p:Configuration=Release /p:Platform=x64
+      run: msbuild r77.slnx /p:Configuration=Release /p:Platform=x64
 
     - name: Build x86 Configuration
-      run: msbuild r77.sln /p:Configuration=Release /p:Platform=x86
+      run: msbuild r77.slnx /p:Configuration=Release /p:Platform=x86
 
     - name: Upload Compiled Artifacts
       uses: actions/upload-artifact@v4
