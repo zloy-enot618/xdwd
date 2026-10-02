@@ -1,0 +1,37 @@
+name: Build r77 Rootkit
+
+on: 
+  workflow_dispatch: # Кнопка ручного запуска сборки
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+      
+    - name: Restore NuGet Packages
+      run: nuget restore r77.sln
+
+    - name: Build x64 Configuration
+      run: msbuild r77.sln /p:Configuration=Release /p:Platform=x64
+
+    - name: Build x86 Configuration
+      run: msbuild r77.sln /p:Configuration=Release /p:Platform=x86
+
+    - name: Upload Compiled Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: r77-built-output
+        path: |
+          **/Release/
+          **/bin/Release/
+          **/x64/Release/
+          **/Win32/Release/
