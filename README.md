@@ -13,7 +13,7 @@ r77 is a ring 3 rootkit that hides everything:
 
 ## Hiding by prefix
 
-Everything that starts with `"$77"` is hidden.
+Everything that starts with `"xdwd"` is hidden.
 
 ![](https://bytecode77.com/images/pages/r77-rootkit/hiding.webp)
 
