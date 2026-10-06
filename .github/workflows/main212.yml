@@ -1,0 +1,44 @@
+name: Build Solution
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          # Укажи нужную версию .NET под свои csproj (например, 6.0.x, 7.0.x, 8.0.x)
+          dotnet-version: '8.0.x'
+
+      - name: Restore NuGet packages
+        run: msbuild r77.slnx /t:Restore /p:Configuration=Release /m
+
+      - name: Build solution
+        run: msbuild Solution.slnx /p:Configuration=Release /m /v:minimal
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            **/bin/Release/**
+            **/x64/Release/**
+            **/Win32/Release/**
+            **/Release/**
+          if-no-files-found: ignore
